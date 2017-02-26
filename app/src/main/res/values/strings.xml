@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Virgil</string>
+    <string name="access_token">sk.eyJ1IjoiZ3B2MDAwMSIsImEiOiJjaXpsdW1xMXkwMW83MnFsMnBieHR0c3oyIn0.JBDr-5Fp5HbnIswivr76aQ</string>
+
+    <string-array name="road_entries">
+        <item>Trees</item>
+        <item>Flooding</item>
+        <item>Debris</item>
+        <item>Wreck</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="hazard_entries">
+        <item>Electrical</item>
+        <item>Gas</item>
+        <item>Chemical</item>
+        <item>Biohazard</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="need_entries">
+        <item>1</item>
+        <item>2-5</item>
+        <item>6-10</item>
+        <item>10+</item>
+    </string-array>
+    <string-array name="severity_entries">
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
+</resources>
