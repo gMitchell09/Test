@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,12 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity {
     public static class DetailsFragment extends android.support.v4.app.Fragment {
@@ -352,8 +359,44 @@ public class MainActivity extends FragmentActivity {
 
                 CameraPosition cam = new CameraPosition.Builder().target(new LatLng(34.73, -86.58)).zoom(12).build();
                 mapboxMap.setCameraPosition(cam);
+
+                addDataFromAssets("Hospitals", R.drawable.ic_aid, mapboxMap);
+                addDataFromAssets("UrgentCare", R.drawable.ic_aid, mapboxMap);
+//                addDataFromAssets("NursingHomes", R.drawable.ic_people, mapboxMap);
+//                addDataFromAssets("SchoolsInMadisonCounty", R.drawable.ic_people, mapboxMap);
+//                addDataFromAssets("TrailerParks", R.drawable.ic_people, mapboxMap);
+
             }
         });
+    }
+
+    // fileName, just the name no type
+    public void addDataFromAssets(String fileName, int iconIndex, MapboxMap mapboxmap) {
+        Log.e("Resource: ", "" + getResources().getIdentifier(fileName, "raw", getPackageName()));
+
+        try {
+            // Open and parse CSV data files
+            InputStream ins = getResources().getAssets().open(fileName + ".csv");//getResources().openRawResource(getResources().getIdentifier("Hospitals", "raw", getPackageName()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
+
+            String csvLine;
+            while ((csvLine = reader.readLine()) != null) {
+                List<String> csv = CSVReader.parseLine(csvLine);
+                // Create an Icon object for the marker to use
+                IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, iconIndex);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+
+                // Add the custom icon marker to the map
+                mapboxmap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(csv.get(1)), Double.parseDouble(csv.get(0))))
+                        .title(csv.get(2))
+                        .snippet(csv.get(3))
+                        .icon(icon));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading from data file!");
+        }
     }
 
     public void showAddDialog(LatLng pos) {
