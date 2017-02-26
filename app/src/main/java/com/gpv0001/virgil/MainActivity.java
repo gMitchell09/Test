@@ -1,11 +1,14 @@
 package com.gpv0001.virgil;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +20,23 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.commons.utils.TextUtils;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity {
     public static class DetailsFragment extends android.support.v4.app.Fragment {
@@ -352,6 +367,8 @@ public class MainActivity extends FragmentActivity {
 
                 CameraPosition cam = new CameraPosition.Builder().target(new LatLng(34.73, -86.58)).zoom(12).build();
                 mapboxMap.setCameraPosition(cam);
+
+                new DrawGeoJson(mapboxMap).execute();
             }
         });
     }
@@ -606,6 +623,72 @@ public class MainActivity extends FragmentActivity {
 
         public void onMapLongClick(LatLng pos) {
             mainActivity.showAddDialog(pos);
+        }
+    }
+
+    private class DrawGeoJson extends AsyncTask<Void, Void, List<LatLng>> {
+        private MapboxMap mapboxMap;
+        public DrawGeoJson(MapboxMap map) {
+            super();
+            mapboxMap = map;
+        }
+
+        @Override
+        protected List<LatLng> doInBackground(Void... voids) {
+
+            ArrayList<LatLng> points = new ArrayList<>();
+
+            try {
+                // Load GeoJSON file
+                InputStream inputStream = getAssets().open("CensusTractsMadison.geojson");
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+                StringBuilder sb = new StringBuilder();
+                int cp;
+                while ((cp = rd.read()) != -1) {
+                    sb.append((char) cp);
+                }
+
+                inputStream.close();
+
+                // Parse JSON
+                JSONObject json = new JSONObject(sb.toString());
+                JSONArray features = json.getJSONArray("features");
+                JSONObject feature = features.getJSONObject(0);
+                JSONObject geometry = feature.getJSONObject("geometry");
+                if (geometry != null) {
+                    String type = geometry.getString("type");
+
+                    // Our GeoJSON only has one feature: a line string
+                    if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("LineString")) {
+
+                        // Get the Coordinates
+                        JSONArray coords = geometry.getJSONArray("coordinates");
+                        for (int lc = 0; lc < coords.length(); lc++) {
+                            JSONArray coord = coords.getJSONArray(lc);
+                            LatLng latLng = new LatLng(coord.getDouble(1), coord.getDouble(0));
+                            points.add(latLng);
+                        }
+                    }
+                }
+            } catch (Exception exception) {
+                Log.e("GeoJSON: ", exception.toString());
+            }
+
+            return points;
+        }
+
+        @Override
+        protected void onPostExecute(List<LatLng> points) {
+            super.onPostExecute(points);
+
+            if (points.size() > 0) {
+
+                // Draw polyline on map
+                mapboxMap.addPolyline(new PolylineOptions()
+                        .addAll(points)
+                        .color(Color.parseColor("#3bb2d0"))
+                        .width(2));
+            }
         }
     }
 }
