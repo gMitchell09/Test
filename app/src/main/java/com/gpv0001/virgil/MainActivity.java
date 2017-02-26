@@ -1,36 +1,20 @@
 package com.gpv0001.virgil;
 
-import android.app.Fragment;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telecom.Call;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.gpv0001.virgil.R;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.InfoWindow;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -427,7 +411,18 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
-                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Drawable iconDrawable = null;
+                switch (bs.severityIndex) {
+                    case 0:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_road_hazard_high);
+                        break;
+                    case 1:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_road_hazard_medium);
+                        break;
+                    case 2:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_road_hazard_low);
+                        break;
+                }
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
 
                 mapboxMap.addMarker(
@@ -453,7 +448,18 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
-                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Drawable iconDrawable = null;
+                switch (bs.severityIndex) {
+                    case 0:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_hazard_high);
+                        break;
+                    case 1:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_hazard_medium);
+                        break;
+                    case 2:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_hazard_low);
+                        break;
+                }
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
 
                 mapboxMap.addMarker(
@@ -479,7 +485,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
-                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_aid);
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
 
                 mapboxMap.addMarker(
@@ -505,7 +511,18 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
-                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Drawable iconDrawable = null;
+                switch (bs.severityIndex) {
+                    case 0:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_need_high);
+                        break;
+                    case 1:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_need_medium);
+                        break;
+                    case 2:
+                        iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_need_low);
+                        break;
+                }
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
 
                 mapboxMap.addMarker(
