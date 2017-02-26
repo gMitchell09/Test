@@ -1,5 +1,6 @@
 package com.gpv0001.virgil;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -375,9 +376,9 @@ public class MainActivity extends FragmentActivity {
 
                 addDataFromAssets("Hospitals", R.drawable.ic_aid, mapboxMap);
                 addDataFromAssets("UrgentCare", R.drawable.ic_aid, mapboxMap);
-//                addDataFromAssets("NursingHomes", R.drawable.ic_people, mapboxMap);
-//                addDataFromAssets("SchoolsInMadisonCounty", R.drawable.ic_people, mapboxMap);
-//                addDataFromAssets("TrailerParks", R.drawable.ic_people, mapboxMap);
+                addDataFromAssets("NursingHomes", R.drawable.ic_people, mapboxMap);
+                addDataFromAssets("SchoolsInMadisonCounty", R.drawable.ic_people, mapboxMap);
+                addDataFromAssets("TrailerParks", R.drawable.ic_people, mapboxMap);
 
 
                 new DrawGeoJson(mapboxMap).execute();
