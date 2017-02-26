@@ -64,9 +64,4 @@ public class InfoView extends LinearLayout {
         invalidate();
         requestLayout();
     }
-
-    public void show() {
-        invalidate();
-        requestLayout();
-    }
 }

@@ -15,37 +15,36 @@
 
     <fragment
         android:id="@+id/fragment_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/sidebar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:name="com.gpv0001.virgil.MainActivity$DetailsFragment"/>
 
     <fragment
         android:id="@+id/fragment_road"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/sidebar_width"
+        android:layout_height="match_parent"
         android:name="com.gpv0001.virgil.MainActivity$RoadFragment"/>
 
     <fragment
         android:id="@+id/fragment_hazard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/sidebar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:name="com.gpv0001.virgil.MainActivity$HazardFragment"/>
 
     <fragment
         android:id="@+id/fragment_aid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/sidebar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:name="com.gpv0001.virgil.MainActivity$AidFragment"/>
 
     <fragment
         android:id="@+id/fragment_need"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/sidebar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:name="com.gpv0001.virgil.MainActivity$NeedFragment"/>
 
 </RelativeLayout>

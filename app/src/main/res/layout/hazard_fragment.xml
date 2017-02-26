@@ -55,7 +55,7 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/road_severity_spinner"
+        android:id="@+id/severity_spinner"
         android:layout_weight="1"
         android:entries="@array/severity_entries" />
 
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:hint="Additional Details"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/details"
         android:layout_weight="1" />
 
     <Space

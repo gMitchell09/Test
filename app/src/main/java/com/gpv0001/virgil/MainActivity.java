@@ -2,11 +2,14 @@ package com.gpv0001.virgil;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
@@ -19,10 +22,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.gpv0001.virgil.R;
 import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.InfoWindow;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -42,39 +49,267 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public class RoadMarker {
+        public int hazardIndex;
+        public String hazard;
+        public int severityIndex;
+        public String severity;
+
+        public LatLng position;
+        public RoadMarker(LatLng pos) {
+            position = pos;
+        }
+    }
+
+    public class HazardMarker {
+        public int hazardTypeIndex;
+        public String hazardType;
+        public int severityIndex;
+        public String severity;
+        public String details;
+
+        public LatLng position;
+        public HazardMarker(LatLng pos) {
+            position = pos;
+        }
+    }
+
+    public class AidMarker {
+        public String location;
+        public String description;
+        public String services;
+
+        public LatLng position;
+        public AidMarker(LatLng pos) {
+            position = pos;
+        }
+    }
+
+    public class NeedMarker {
+        public int affectedIndex;
+        public String affected;
+        public int severityIndex;
+        public String severity;
+
+        public LatLng position;
+        public NeedMarker(LatLng pos) {
+            position = pos;
+        }
+    }
+
     public static class RoadFragment extends android.support.v4.app.Fragment {
+        private Spinner m_roadHazard;
+        private Spinner m_severity;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = (ViewGroup) inflater.inflate(R.layout.road_fragment, container, false);
+            m_roadHazard = (Spinner) view.findViewById(R.id.road_hazard_spinner);
+            m_severity = (Spinner) view.findViewById(R.id.road_severity_spinner);
+
             return view;
+        }
+
+        public void setHazardIndex(int index) {
+            m_roadHazard.setSelection(index);
+        }
+
+        public int getHazardIndex() {
+            return m_roadHazard.getSelectedItemPosition();
+        }
+
+        public String getHazard() {
+            return (String)m_roadHazard.getSelectedItem();
+        }
+
+        public void setSeverityIndex(int index) {
+            m_severity.setSelection(index);
+        }
+
+        public int getSeverityIndex() {
+            return m_severity.getSelectedItemPosition();
+        }
+
+        public String getSeverity() {
+            return (String)m_severity.getSelectedItem();
+        }
+
+        public void populateWithMarker(RoadMarker rm) {
+            m_roadHazard.setSelection(rm.hazardIndex);
+            m_severity.setSelection(rm.severityIndex);
+        }
+
+        public void populateMarker(RoadMarker rm) {
+            rm.hazard = getHazard();
+            rm.hazardIndex = getHazardIndex();
+            rm.severity = getSeverity();
+            rm.severityIndex = getSeverityIndex();
         }
     }
 
     public static class HazardFragment extends android.support.v4.app.Fragment {
+        private Spinner m_type;
+        private Spinner m_severity;
+        private EditText m_details;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = (ViewGroup) inflater.inflate(R.layout.hazard_fragment, container, false);
+            m_type = (Spinner)view.findViewById(R.id.hazard_spinner);
+            m_severity = (Spinner)view.findViewById(R.id.severity_spinner);
+            m_details = (EditText)view.findViewById(R.id.details);
             return view;
+        }
+
+        public void setHazardTypeIndex(int index) {
+            m_type.setSelection(index);
+        }
+
+        public int getHazardTypeIndex() {
+            return m_type.getSelectedItemPosition();
+        }
+
+        public String getHazardType() {
+            return (String)m_type.getSelectedItem();
+        }
+
+        public void setSeverityIndex(int index) {
+            m_severity.setSelection(index);
+        }
+
+        public int getSeverityIndex() {
+            return m_severity.getSelectedItemPosition();
+        }
+
+        public String getSeverity() {
+            return (String)m_severity.getSelectedItem();
+        }
+
+        public void setDetails(String details) {
+            m_details.setText(details);
+        }
+
+        public String getDetails() {
+            return m_details.getText().toString();
+        }
+
+        public void populateWithMarker(HazardMarker rm) {
+            m_type.setSelection(rm.hazardTypeIndex);
+            m_severity.setSelection(rm.severityIndex);
+            m_details.setText(rm.details);
+        }
+
+        public void populateMarker(HazardMarker rm) {
+            rm.details = getDetails();
+            rm.hazardType = getHazardType();
+            rm.hazardTypeIndex = getHazardTypeIndex();
+            rm.severity = getSeverity();
+            rm.severityIndex = getSeverityIndex();
         }
     }
 
     public static class AidFragment extends android.support.v4.app.Fragment {
+        private EditText m_location;
+        private EditText m_description;
+        private EditText m_services;
+
+        public void populateWithMarker(AidMarker rm) {
+            m_location.setText(rm.location);
+            m_description.setText(rm.description);
+            m_services.setText(rm.services);
+        }
+
+        public void populateMarker(AidMarker rm) {
+            rm.location = getLocation();
+            rm.description = getDescription();
+            rm.services = getServices();
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = (ViewGroup) inflater.inflate(R.layout.aid_fragment, container, false);
+            m_location = (EditText) view.findViewById(R.id.txt_location);
+            m_description = (EditText) view.findViewById(R.id.txt_description);
+            m_services = (EditText) view.findViewById(R.id.txt_services);
+
             return view;
+        }
+
+        public void setLocation(String location) {
+            m_location.setText(location);
+        }
+        public String getLocation() {
+            return m_location.getText().toString();
+        }
+
+        public void setDescription(String description) {
+            m_description.setText(description);
+        }
+
+        public String getDescription() {
+            return m_description.getText().toString();
+        }
+
+        public void setServices(String services) {
+            m_services.setText(services);
+        }
+
+        public String getServices() {
+            return m_services.getText().toString();
         }
     }
 
     public static class NeedFragment extends android.support.v4.app.Fragment {
+        private Spinner m_numAffected;
+        private Spinner m_severity;
+
+        public void populateWithMarker(NeedMarker rm) {
+            m_numAffected.setSelection(rm.affectedIndex);
+            m_severity.setSelection(rm.severityIndex);
+        }
+
+        public void populateMarker(NeedMarker rm) {
+            rm.affectedIndex = getNumAffectedIndex();
+            rm.affected = getNumAffected();
+            rm.severity = getSeverity();
+            rm.severityIndex = getSeverityIndex();
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = (ViewGroup) inflater.inflate(R.layout.need_fragment, container, false);
+            m_numAffected = (Spinner) view.findViewById(R.id.need_spinner);
+            m_severity = (Spinner) view.findViewById(R.id.need_severity_spinner);
+
             return view;
+        }
+
+        public void setNumAffected(int index) {
+            m_numAffected.setSelection(index);
+        }
+
+        public int getNumAffectedIndex() {
+            return m_numAffected.getSelectedItemPosition();
+        }
+
+        public String getNumAffected() {
+            return (String)m_numAffected.getSelectedItem();
+        }
+
+        public void setSeverity(int index) {
+            m_severity.setSelection(index);
+        }
+
+        public int getSeverityIndex() {
+            return m_severity.getSelectedItemPosition();
+        }
+
+        public String getSeverity() {
+            return (String)m_severity.getSelectedItem();
         }
     }
 
@@ -87,6 +322,7 @@ public class MainActivity extends FragmentActivity {
     private AidFragment m_aidFragment;
     private NeedFragment m_needFragment;
 
+    private LatLng m_mostRecentPoint;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,49 +372,158 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    public void showAddDialog() {
+    public void showAddDialog(LatLng pos) {
+        m_mostRecentPoint = pos;
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(
                 R.anim.slide_in_right, 0, 0, R.anim.slide_out_right
-        ).add( R.id.activity_main, new DetailsFragment() ).addToBackStack( "animation" ).commit();
+        ).show( m_detailsFragment ).addToBackStack( "animation" ).commit();
     }
 
     public void showRoadDialog(View view) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .hide(m_detailsFragment)
                 .setCustomAnimations(
                         R.anim.slide_in_right, 0, 0, R.anim.slide_out_right
-                ).add( R.id.activity_main, new RoadFragment() ).addToBackStack( "animation" ).commit();
+                ).show( m_roadFragment ).addToBackStack( "animation" ).commit();
     }
 
     public void showHazardDialog(View view) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .hide(m_detailsFragment)
                 .setCustomAnimations(
                         R.anim.slide_in_right, 0, 0, R.anim.slide_out_right
-                ).add( R.id.activity_main, new HazardFragment() ).addToBackStack( "animation" ).commit();
+                ).show( m_hazardFragment ).addToBackStack( "animation" ).commit();
     }
 
     public void showAidDialog(View view) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .hide(m_detailsFragment)
                 .setCustomAnimations(
                         R.anim.slide_in_right, 0, 0, R.anim.slide_out_right
-                ).add( R.id.activity_main, new AidFragment() ).addToBackStack( "animation" ).commit();
+                ).show( m_aidFragment ).addToBackStack( "animation" ).commit();
     }
 
     public void showNeedDialog(View view) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .hide(m_detailsFragment)
                 .setCustomAnimations(
                         R.anim.slide_in_right, 0, 0, R.anim.slide_out_right
-                ).add( R.id.activity_main, new NeedFragment() ).addToBackStack( "animation" ).commit();
+                ).show( m_needFragment ).addToBackStack( "animation" ).commit();
+    }
+
+    public void onSaveRoadClick(View view) {
+        RoadMarker roadMarker = new RoadMarker(m_mostRecentPoint);
+        m_roadFragment.populateMarker(roadMarker);
+
+        final RoadMarker bs = roadMarker;
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+
+                mapboxMap.addMarker(
+                        new MarkerOptions()
+                            .title(bs.hazard)
+                            .position(bs.position)
+                            .icon(icon));
+            }
+        });
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(m_roadFragment)
+                .commit();
+    }
+
+    public void onSaveHazardClick(View view) {
+        HazardMarker haz = new HazardMarker(m_mostRecentPoint);
+        m_hazardFragment.populateMarker(haz);
+
+        final HazardMarker bs = haz;
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+
+                mapboxMap.addMarker(
+                        new MarkerOptions()
+                                .title(bs.hazardType)
+                                .position(bs.position)
+                                .icon(icon));
+            }
+        });
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(m_hazardFragment)
+                .commit();
+    }
+
+    public void onSaveAidClick(View view) {
+        AidMarker marker = new AidMarker(m_mostRecentPoint);
+        m_aidFragment.populateMarker(marker);
+
+        final AidMarker bs = marker;
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+
+                mapboxMap.addMarker(
+                        new MarkerOptions()
+                                .title(bs.description)
+                                .position(bs.position)
+                                .icon(icon));
+            }
+        });
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(m_aidFragment)
+                .commit();
+    }
+
+    public void onSaveNeedClick(View view) {
+        NeedMarker marker = new NeedMarker(m_mostRecentPoint);
+        m_needFragment.populateMarker(marker);
+
+        final NeedMarker bs = marker;
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                IconFactory iconFactory = IconFactory.getInstance(MainActivity.this);
+                Drawable iconDrawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.compass);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+
+                mapboxMap.addMarker(
+                        new MarkerOptions()
+                                .title(bs.affected)
+                                .position(bs.position)
+                                .icon(icon));
+            }
+        });
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(m_needFragment)
+                .commit();
     }
 
     public void onDismissClick(View view) {
         getSupportFragmentManager().popBackStack();
-
         getSupportFragmentManager().beginTransaction().commit();
     }
 
@@ -235,21 +580,15 @@ public class MainActivity extends FragmentActivity {
             mainActivity = activity;
         }
         public void onMapClick(LatLng pos) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.setTitle("asdf");
-            markerOptions.setPosition(pos);
-
-            map.addMarker(markerOptions);
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.setTitle("asdf");
+//            markerOptions.setPosition(pos);
+//
+//            map.addMarker(markerOptions);
         }
 
         public void onMapLongClick(LatLng pos) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.setTitle("fdsa");
-            markerOptions.setPosition(pos);
-
-            map.addMarker(markerOptions);
-
-            mainActivity.showAddDialog();
+            mainActivity.showAddDialog(pos);
         }
     }
 }
